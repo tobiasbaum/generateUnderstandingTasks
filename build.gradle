@@ -1,0 +1,49 @@
+apply plugin:'java'
+apply plugin:'eclipse'
+apply plugin:'application'
+
+sourceCompatibility = 1.11
+version = '1.0'
+
+tasks.compileJava.options.encoding = 'UTF-8'
+
+mainClassName = "de.tntinteractive.generateUnderstandingTasks.GenerateUnderstandingTasks"
+
+java {
+    modularity.inferModulePath = true
+}
+
+sourceSets {
+   main {
+      java {
+         srcDir 'src'
+      }
+	  resources {
+		 srcDir 'resources'
+	  }
+   }
+   test {
+      java {
+         srcDir 'test'
+      }
+   }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    /*flatDir {
+        dirs '../libs'
+    }*/
+    mavenCentral()
+}
+
+dependencies {
+	implementation 'org.ow2.asm:asm-tree:8.0.1',
+	    'org.ow2.asm:asm:8.0.1',
+	    'com.github.javaparser:javaparser-symbol-solver-core:3.16.1'
+
+    testImplementation('org.junit.jupiter:junit-jupiter:5.6.2')
+}
