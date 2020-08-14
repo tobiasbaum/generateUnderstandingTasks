@@ -2,6 +2,8 @@ package de.tntinteractive.generateUnderstandingTasks;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import org.objectweb.asm.Type;
@@ -13,6 +15,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
@@ -130,6 +133,29 @@ public class MethodSlice {
 
 	public String getMethodName() {
 		return this.info.getMethodName();
+	}
+
+	public ConstructorDeclaration selectRandomSuitableConstructor(Random r) {
+		final TypeDeclaration<?> type = this.compilationUnit.getType(0);
+		final List<ConstructorDeclaration> suitableConstructors = new ArrayList<>();
+		for (final ConstructorDeclaration d : type.getConstructors()) {
+			if (this.hasSuitableTypes(d)) {
+				suitableConstructors.add(d);
+			}
+		}
+		if (suitableConstructors.isEmpty()) {
+			return null;
+		}
+		return suitableConstructors.get(r.nextInt(suitableConstructors.size()));
+	}
+
+	private boolean hasSuitableTypes(ConstructorDeclaration d) {
+		for (final Parameter p : d.getParameters()) {
+			if (!JavaValue.isSuitableType(p.getType())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override

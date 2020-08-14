@@ -10,15 +10,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Random;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import javax.tools.ToolProvider;
-
-import org.objectweb.asm.Type;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -30,55 +28,28 @@ public class UnderstandingTaskCode {
 	private final String className;
 	private final String code;
 
-	public UnderstandingTaskCode(MethodSlice slice, List<JavaValue> args) {
+	public UnderstandingTaskCode(MethodSlice slice, List<JavaValue> args, Random r) {
 		final CompilationUnit cu = slice.getCopyOfCode();
 		this.className = slice.getClassName();
 		final ClassOrInterfaceDeclaration cl = cu.getClassByName(slice.getClassName()).get();
 
-		cl.addMember(this.createMainMethod(slice, args));
+		cl.addMember(this.createMainMethod(slice, args, r));
 		this.code = cu.toString();
 	}
 
-	private MethodDeclaration createMainMethod(MethodSlice slice, List<JavaValue> args) {
-		final String mainPrefix =
-				"class Main {"
-				+ "    public static void main(String[] args) {";
-		final String mainSuffix =
-				"    }"
-				+ "}";
-		final String mainCode;
+	private MethodDeclaration createMainMethod(MethodSlice slice, List<JavaValue> args, Random r) {
+		final MethodWriter code = new MethodWriter();
+		code.addMainPrefix();
 		if (slice.isStatic()) {
-			final String call = slice.getMethodName() + "(" + this.joinArgCode(args) + ")";
-			mainCode = mainPrefix
-					+ "        System.out.print(" + addToString(call, slice.getReturnType()) + ");"
-					+ mainSuffix;
+			code.printStaticCall(slice, args);
 		} else {
-			final String call = "inst." + slice.getMethodName() + "(" + this.joinArgCode(args) + ")";
-			mainCode = mainPrefix
-					+ "        " + slice.getClassName() + " inst = new " + slice.getClassName() + "();"
-					+ "        System.out.print(" + addToString(call, slice.getReturnType()) + ");"
-					+ mainSuffix;
+			code.printCreateInstance(slice, r);
+			code.printInstanceCall(slice, args);
 		}
+		code.addMainSuffix();
 
-		final CompilationUnit mainCu = StaticJavaParser.parse(mainCode);
+		final CompilationUnit mainCu = StaticJavaParser.parse(code.toString());
 		return mainCu.getClassByName("Main").get().getMethodsByName("main").get(0);
-	}
-
-	private String joinArgCode(List<JavaValue> args) {
-		return args.stream()
-				.map(JavaValue::getCode)
-				.collect(Collectors.joining(", "));
-	}
-
-	private static String addToString(String call, Type returnType) {
-		switch (returnType.getInternalName()) {
-		case "java/lang/String":
-			return call;
-		case "[Ljava/lang/String;":
-			return "java.util.Arrays.toString(" + call + ")";
-		default:
-			throw new AssertionError("unknown type " + returnType.getInternalName());
-		}
 	}
 
 	public String getCode() {

@@ -32,10 +32,10 @@ public class SuitableMethod implements MethodInfo {
 		final Set<UnderstandingTaskTemplate> ret = new LinkedHashSet<>();
 		final MethodSlice slice = MethodSlice.create(
 				this, new SourceJar(sourceJar));
-		for (int i = 0; i < maxCount * 3; i++) {
+		for (int i = 0; i < maxCount * 10; i++) {
 			final List<JavaValue> args = this.generateArgs(r);
 			System.out.println(args);
-			final UnderstandingTaskCode u = new UnderstandingTaskCode(slice, args);
+			final UnderstandingTaskCode u = new UnderstandingTaskCode(slice, args, r);
 			final String result = u.determineResult();
 			if (this.isSuitableResult(result, args)) {
 				ret.add(new UnderstandingTaskTemplate(u, result));
@@ -65,37 +65,9 @@ public class SuitableMethod implements MethodInfo {
 	private List<JavaValue> generateArgs(Random r) {
 		final List<JavaValue> ret = new ArrayList<>();
 		for (final Type type : this.params) {
-			ret.add(generateArg(type, r));
+			ret.add(JavaValue.generateArg(type, r));
 		}
 		return ret;
-	}
-
-	private static JavaValue generateArg(Type type, Random r) {
-		switch (type.getDescriptor()) {
-		case "I":
-			return JavaValue.intValue(oneOf(r, "0", "1", "-1", "2", "3", "4", "5", "10", "15", "20", "100", "1000"));
-		case "Ljava/lang/String;":
-			return JavaValue.stringValue(
-				oneOf(r, "", "a", "b", "X", "Y", "Foo", "Bar", "B A Z", "Hello World!", "http://example.com",
-						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'"));
-		case "[Ljava/lang/String;":
-			final int count = r.nextInt(4);
-			return generateArrayArg(count, "String", Type.getType(type.getDescriptor().substring(1)), r);
-		default:
-			throw new AssertionError("unsupported type " + type.getDescriptor());
-		}
-	}
-
-	private static JavaValue generateArrayArg(int count, String typeStr, Type type, Random r) {
-		final List<JavaValue> elements = new ArrayList<>();
-		for (int i = 0; i < count; i++) {
-			elements.add(generateArg(type, r));
-		}
-		return JavaValue.arrayValue(typeStr, elements);
-	}
-
-	private static String oneOf(Random r, String... strings) {
-		return strings[r.nextInt(strings.length)];
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package de.tntinteractive.generateUnderstandingTasks;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Collections;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -83,7 +84,7 @@ public class UnderstandingTaskCodeTest {
 				+ "}\n");
 
 		final UnderstandingTaskCode code = new UnderstandingTaskCode(
-				slice, Collections.singletonList(JavaValue.intValue("1")));
+				slice, Collections.singletonList(JavaValue.intValue("1")), new Random(12));
 		assertEquals("2", code.determineResult());
 	}
 
@@ -101,7 +102,7 @@ public class UnderstandingTaskCodeTest {
 				+ "}\n");
 
 		final UnderstandingTaskCode code = new UnderstandingTaskCode(
-				slice, Collections.singletonList(JavaValue.intValue("1")));
+				slice, Collections.singletonList(JavaValue.intValue("1")), new Random(45));
 		assertEquals(
 				"public class Foo {\n"
 				+ "\n"
