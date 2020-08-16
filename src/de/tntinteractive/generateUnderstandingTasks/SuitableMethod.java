@@ -39,6 +39,11 @@ public class SuitableMethod implements MethodInfo {
 			final String result = u.determineResult();
 			if (this.isSuitableResult(result, args)) {
 				ret.add(new UnderstandingTaskTemplate(slice.getClassName() + "_" + slice.getMethodName(), u, result));
+			} else if (result != null) {
+				//TEST
+				if (i == maxCount * 10 - 1 && ret.isEmpty()) {
+					System.out.println("unsuitable " + result + " of\n" + u.getCode());
+				}
 			}
 			if (ret.size() >= maxCount) {
 				break;

@@ -12,12 +12,15 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
+import com.github.javaparser.ast.nodeTypes.NodeWithExtends;
+import com.github.javaparser.ast.nodeTypes.NodeWithImplements;
 import com.github.javaparser.ast.nodeTypes.NodeWithSimpleName;
 
 public class MethodSlice {
@@ -96,6 +99,13 @@ public class MethodSlice {
 		}
 
 		for (final TypeDeclaration<?> type : cu.getTypes()) {
+			if (type instanceof NodeWithImplements) {
+				((NodeWithImplements) type).setImplementedTypes(new NodeList<>());
+			}
+			if (type instanceof NodeWithExtends) {
+				((NodeWithExtends) type).setExtendedTypes(new NodeList<>());
+			}
+
 			for (final MethodDeclaration method : new ArrayList<>(type.getMethods())) {
 				if (!relevantNames.contains(method.getNameAsString())) {
 					method.remove();

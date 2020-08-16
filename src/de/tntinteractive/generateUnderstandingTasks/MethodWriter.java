@@ -62,6 +62,16 @@ public class MethodWriter {
 			return call;
 		case "[Ljava/lang/String;":
 			return "java.util.Arrays.toString(" + call + ")";
+		case "I":
+		case "S":
+		case "B":
+			return "Integer.toString(" + call + ")";
+		case "C":
+			return "Character.toString(" + call + ")";
+		case "J":
+			return "Long.toString(" + call + ")";
+		case "Z":
+			return "Boolean.toString(" + call + ")";
 		default:
 			throw new AssertionError("unknown type " + returnType.getInternalName());
 		}

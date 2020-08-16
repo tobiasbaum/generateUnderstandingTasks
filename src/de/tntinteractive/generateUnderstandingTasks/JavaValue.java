@@ -21,6 +21,29 @@ public class JavaValue {
 		return new JavaValue(value, value);
 	}
 
+	public static JavaValue longValue(String value) {
+		return new JavaValue(value, value);
+	}
+
+	public static JavaValue shortValue(String value) {
+		return new JavaValue("(short) " + value, value);
+	}
+
+	public static JavaValue byteValue(String value) {
+		return new JavaValue("(byte) " + value, value);
+	}
+
+	public static JavaValue booleanValue(boolean value) {
+		final String s = Boolean.toString(value);
+		return new JavaValue(s, s);
+	}
+
+	public static JavaValue charValue(String value) {
+		return new JavaValue(
+				"\'" + value.replace("\\", "\\\\").replace("\'", "\\\'").replace("\"", "\\\"") + "\'",
+				value);
+	}
+
 	public static JavaValue stringValue(String value) {
 		return new JavaValue(
 				"\"" + value.replace("\\", "\\\\").replace("\'", "\\\'").replace("\"", "\\\"") + "\"",
@@ -59,10 +82,20 @@ public class JavaValue {
 		switch (type.getDescriptor()) {
 		case "I":
 			return JavaValue.intValue(oneOf(r, "0", "1", "-1", "2", "3", "4", "5", "10", "15", "20", "100", "1000"));
+		case "J":
+			return JavaValue.longValue(oneOf(r, "0", "1", "-1", "2", "3", "4", "5", "10", "15", "20", "100", "1000"));
+		case "S":
+			return JavaValue.shortValue(oneOf(r, "0", "1", "-1", "2", "3", "4", "5", "10", "15", "20", "100", "1000"));
+		case "B":
+			return JavaValue.byteValue(oneOf(r, "0", "1", "-1", "2", "3", "4", "5", "10", "15", "20", "100", "1000"));
+		case "Z":
+			return JavaValue.booleanValue(r.nextBoolean());
+		case "C":
+			return JavaValue.charValue(oneOf(r, "a", "b", "c", "x", "y", "z", "A", "B", "C", "Y", "Y", "Z", "!", "\"", "\'", " ", "_", ",", ".", "0", "1", "2", "9"));
 		case "Ljava/lang/String;":
 			return JavaValue.stringValue(
 				oneOf(r, "", "a", "b", "X", "Y", "Foo", "Bar", "B A Z", "Hello World!", "http://example.com",
-						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'"));
+						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'", "23.0", "72.1"));
 		case "[Ljava/lang/String;":
 			final int count = r.nextInt(4);
 			return generateArrayArg(count, "String", Type.getType(type.getDescriptor().substring(1)), r);
@@ -86,8 +119,14 @@ public class JavaValue {
 		switch (type.toString()) {
 		case "String[][]":
 			return Type.getType("[[Ljava/lang/String;");
+		case "String[]":
+			return Type.getType("[Ljava/lang/String;");
+		case "String":
+			return Type.getType("Ljava/lang/String;");
+		case "int":
+			return Type.getType("I");
 		default:
-			throw new AssertionError("type=" + type.toString());
+			return null;
 		}
 	}
 

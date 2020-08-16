@@ -27,6 +27,8 @@ public class SourceJar {
 			return null;
 		}
 		try (InputStream stream = this.jar.getInputStream(entry)) {
+			//TEST TODO das ist eine statische Einstellung und sollte nicht hier gesetzt werden
+			StaticJavaParser.getConfiguration().setAttributeComments(false);
 			return StaticJavaParser.parse(stream);
 		} catch (final IOException e) {
 			return null;
