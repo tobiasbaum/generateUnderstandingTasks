@@ -38,7 +38,7 @@ public class SuitableMethod implements MethodInfo {
 			final UnderstandingTaskCode u = new UnderstandingTaskCode(slice, args, r);
 			final String result = u.determineResult();
 			if (this.isSuitableResult(result, args)) {
-				ret.add(new UnderstandingTaskTemplate(u, result));
+				ret.add(new UnderstandingTaskTemplate(slice.getClassName() + "_" + slice.getMethodName(), u, result));
 			}
 			if (ret.size() >= maxCount) {
 				break;

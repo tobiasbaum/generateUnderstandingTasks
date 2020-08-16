@@ -86,9 +86,10 @@ public class GenerateUnderstandingTasks {
 		try (JarFile jarFile = new JarFile(sourceJar)) {
 			for (final SuitableMethod m : ms) {
 				final Set<UnderstandingTaskTemplate> tasks = m.generateTasks(3, jarFile, r);
-				//TEST
+
+				final File targetRoot = new File("taskdb");
 				for (final UnderstandingTaskTemplate t : tasks) {
-					System.out.println(t.toString());
+					t.writeTask(targetRoot);
 				}
 			}
 		}
