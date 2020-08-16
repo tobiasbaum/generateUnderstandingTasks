@@ -37,13 +37,13 @@ public class MethodSlice {
 		return create(info, sourceJar.getSource(info.getPathToClass()));
 	}
 
-	public static MethodSlice create(String methodName, String code) {
+	public static MethodSlice create(String methodName, boolean isStatic, String code) {
 		final CompilationUnit cu = StaticJavaParser.parse(code);
 		final String className = cu.getTypes().get(0).getName().asString();
 		final MethodInfo dummy = new MethodInfo() {
 			@Override
 			public boolean isStatic() {
-				return true;
+				return isStatic;
 			}
 			@Override
 			public Type getReturnType() {
@@ -69,20 +69,40 @@ public class MethodSlice {
 
 	private static MethodSlice create(MethodInfo info, CompilationUnit cu) {
 
-		final Set<String> relevantNames = new HashSet<>();
-		relevantNames.add(info.getMethodName());
+		Set<String> newRelevantNames = new HashSet<>();
+		newRelevantNames.add(info.getMethodName());
 		if (!info.isStatic()) {
-			relevantNames.add(info.getClassName());
+			newRelevantNames.add(info.getClassName());
 		}
 
-		for (final MethodDeclaration method : cu.getTypes().get(0).getMethodsByName(info.getMethodName())) {
-			extractAllUsedNames(method, relevantNames);
-		}
+		final Set<String> relevantNames = new HashSet<>();
+		do {
+			final Set<String> nextNewRelevantNames = new HashSet<>();
+			for (final String name : newRelevantNames) {
+				extractAllUsedNamesFromMethodIfExists(name, cu, nextNewRelevantNames);
+			}
+			relevantNames.addAll(newRelevantNames);
+			nextNewRelevantNames.removeAll(relevantNames);
+			newRelevantNames = nextNewRelevantNames;
+		} while (!newRelevantNames.isEmpty());
 		removeAllIrrelevantEntries(cu, relevantNames);
 		return new MethodSlice(info, cu);
 	}
 
-	private static void extractAllUsedNames(MethodDeclaration method, Set<String> relevantNames) {
+	private static void extractAllUsedNamesFromMethodIfExists(
+			String methodName, CompilationUnit cu, Set<String> relevantNames) {
+		final TypeDeclaration<?> typeDeclaration = cu.getTypes().get(0);
+		for (final MethodDeclaration method : typeDeclaration.getMethodsByName(methodName)) {
+			extractAllUsedNames(method, relevantNames);
+		}
+		if (methodName.equals(typeDeclaration.getNameAsString())) {
+			for (final ConstructorDeclaration cons : typeDeclaration.getConstructors()) {
+				extractAllUsedNames(cons, relevantNames);
+			}
+		}
+	}
+
+	private static void extractAllUsedNames(Node method, Set<String> relevantNames) {
 		for (final Node node : method.findAll(Node.class, (Node n) -> n instanceof NodeWithSimpleName)) {
 			relevantNames.add(((NodeWithSimpleName<?>) node).getNameAsString());
 		}

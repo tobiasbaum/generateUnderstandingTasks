@@ -74,7 +74,7 @@ public class UnderstandingTaskCodeTest {
 	public void testDetermineResult() {
 		final MethodSlice slice = MethodSlice.create(
 				"increment",
-				"public class Foo {\n"
+				true, "public class Foo {\n"
 				+ "    /**\n"
 				+ "     * Does the incrementation.\n"
 				+ "     */\n"
@@ -92,7 +92,7 @@ public class UnderstandingTaskCodeTest {
 	public void testGetCode() {
 		final MethodSlice slice = MethodSlice.create(
 				"increment",
-				"public class Foo {\n"
+				true, "public class Foo {\n"
 				+ "    /**\n"
 				+ "     * Does the incrementation.\n"
 				+ "     */\n"

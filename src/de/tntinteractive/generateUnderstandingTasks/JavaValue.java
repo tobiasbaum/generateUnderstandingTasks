@@ -95,7 +95,7 @@ public class JavaValue {
 		case "Ljava/lang/String;":
 			return JavaValue.stringValue(
 				oneOf(r, "", "a", "b", "X", "Y", "Foo", "Bar", "B A Z", "Hello World!", "http://example.com",
-						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'", "23.0", "72.1"));
+						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'", "23.0", "72.1", "UTF-8"));
 		case "[Ljava/lang/String;":
 			final int count = r.nextInt(4);
 			return generateArrayArg(count, "String", Type.getType(type.getDescriptor().substring(1)), r);

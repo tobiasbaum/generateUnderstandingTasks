@@ -21,7 +21,7 @@ public class MethodWriter {
 
 	public void addMainPrefix() {
 		this.code.append("class Main {\n");
-		this.code.append("    public static void main(String[] args) {\n");
+		this.code.append("    public static void main(String[] args) throws Exception {\n");
 	}
 
 	public void addMainSuffix() {
