@@ -13,6 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -22,14 +23,14 @@ public class GenerateUnderstandingTasks {
 	public static void main(String[] args) throws Exception {
 		final File jar;
 		final File sourceJar;
-		jar = new File("/home/ich/eclipse-workspace/DreiDBeraterDaten/build/libs/DreiDBeraterDaten-1.0.jar");
-		sourceJar = jar;
+//		jar = new File("/home/ich/eclipse-workspace/DreiDBeraterDaten/build/libs/DreiDBeraterDaten-1.0.jar");
+//		sourceJar = jar;
 
 //		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.eclipsesource.minimal-json/minimal-json/0.9.4/d6e7dd22569de97c2697a4af301a623f35028972/minimal-json-0.9.4.jar");
 //		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.eclipsesource.minimal-json/minimal-json/0.9.4/a7f9afb2417b0126267435586bce893498bd8eff/minimal-json-0.9.4-sources.jar");
 
-//		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/16313e02a793435009f1e458fa4af5d879f6fb11/commons-lang-2.4.jar");
-//		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/2b8c4b3035e45520ef42033e823c7d33e4b4402c/commons-lang-2.4-sources.jar");
+		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/16313e02a793435009f1e458fa4af5d879f6fb11/commons-lang-2.4.jar");
+		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/2b8c4b3035e45520ef42033e823c7d33e4b4402c/commons-lang-2.4-sources.jar");
 
 		final List<SuitableMethod> m = findSuitableMethodsInJar(jar);
 		final Random r = new Random(1234);
@@ -71,6 +72,7 @@ public class GenerateUnderstandingTasks {
 	private static boolean isSuitable(MethodNode method) {
 		final Type[] params = Type.getArgumentTypes(method.desc);
 		return params.length >= 1
+			&& (method.access & Opcodes.ACC_ABSTRACT) == 0
 			&& Arrays.asList(params).stream().allMatch(GenerateUnderstandingTasks::isSuitableType)
 			&& isSuitableType(Type.getReturnType(method.desc));
 	}
