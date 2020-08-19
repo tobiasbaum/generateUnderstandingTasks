@@ -2,6 +2,7 @@ package de.tntinteractive.generateUnderstandingTasks;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
@@ -32,6 +33,10 @@ public class SuitableMethod implements MethodInfo {
 		final Set<UnderstandingTaskTemplate> ret = new LinkedHashSet<>();
 		final MethodSlice slice = MethodSlice.create(
 				this, new SourceJar(sourceJar));
+		if (!UnderstandingTaskCode.compile(slice.getClassName(), slice.getCopyOfCode().toString())) {
+			// if the code does not compile even without the main, don't try the rest
+			return Collections.emptySet();
+		}
 		for (int i = 0; i < maxCount * 10; i++) {
 			final List<JavaValue> args = this.generateArgs(r);
 			System.out.println(args);
