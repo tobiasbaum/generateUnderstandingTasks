@@ -10,6 +10,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import javax.tools.JavaCompiler;
@@ -31,10 +32,16 @@ public class UnderstandingTaskCode {
 	public UnderstandingTaskCode(MethodSlice slice, List<JavaValue> args, Random r) {
 		final CompilationUnit cu = slice.getCopyOfCode();
 		this.className = slice.getClassName();
-		final ClassOrInterfaceDeclaration cl = cu.getClassByName(slice.getClassName()).get();
+		try {
+			final ClassOrInterfaceDeclaration cl = cu.getClassByName(slice.getClassName()).get();
 
-		cl.addMember(this.createMainMethod(slice, args, r));
-		this.code = cu.toString();
+			cl.addMember(this.createMainMethod(slice, args, r));
+			this.code = cu.toString();
+		} catch (final NoSuchElementException e) {
+			//TEST
+			System.out.println(slice.getClassName() + " not found in " + cu);
+			throw e;
+		}
 	}
 
 	private MethodDeclaration createMainMethod(MethodSlice slice, List<JavaValue> args, Random r) {
@@ -111,13 +118,7 @@ public class UnderstandingTaskCode {
 	}
 
 	public static String compileAndGetStdout(String classname, String javaCode, long timeout) {
-		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		final JavaFileObject file = new JavaSourceFromString(classname, javaCode);
-
-		final CompilationTask task =
-				compiler.getTask(null, null, null, null, null, Collections.singletonList(file));
-
-		final boolean success = task.call();
+		final boolean success = compile(classname, javaCode);
 		if (!success) {
 			return null;
 		}
@@ -136,6 +137,17 @@ public class UnderstandingTaskCode {
 		} catch (final Throwable e) {
 			return null;
 		}
+	}
+
+	public static boolean compile(String classname, String javaCode) {
+		final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		final JavaFileObject file = new JavaSourceFromString(classname, javaCode);
+
+		final CompilationTask task =
+				compiler.getTask(null, null, null, null, null, Collections.singletonList(file));
+
+		final boolean success = task.call();
+		return success;
 	}
 
 }

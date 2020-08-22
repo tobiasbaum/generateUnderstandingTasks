@@ -96,12 +96,22 @@ public class JavaValue {
 			return JavaValue.stringValue(
 				oneOf(r, "", "a", "b", "X", "Y", "Foo", "Bar", "B A Z", "Hello World!", "http://example.com",
 						"42", "123-456", "The lazy fox jumps", "tmp\\xy/z", "\"inq\"", "\'inq\'", "23.0", "72.1", "UTF-8"));
+		case "[I":
+			return generateArrayArg("int", Type.getType(type.getDescriptor().substring(1)), r);
+		case "[J":
+			return generateArrayArg("long", Type.getType(type.getDescriptor().substring(1)), r);
+		case "[S":
+			return generateArrayArg("short", Type.getType(type.getDescriptor().substring(1)), r);
+		case "[B":
+			return generateArrayArg("byte", Type.getType(type.getDescriptor().substring(1)), r);
+		case "[Z":
+			return generateArrayArg("boolean", Type.getType(type.getDescriptor().substring(1)), r);
+		case "[C":
+			return generateArrayArg("char", Type.getType(type.getDescriptor().substring(1)), r);
 		case "[Ljava/lang/String;":
-			final int count = r.nextInt(4);
-			return generateArrayArg(count, "String", Type.getType(type.getDescriptor().substring(1)), r);
+			return generateArrayArg("String", Type.getType(type.getDescriptor().substring(1)), r);
 		case "[[Ljava/lang/String;":
-			final int count2 = r.nextInt(4);
-			return generateArrayArg(count2, "String[]", Type.getType(type.getDescriptor().substring(1)), r);
+			return generateArrayArg("String[]", Type.getType(type.getDescriptor().substring(1)), r);
 		default:
 			throw new AssertionError("unsupported type " + type.getDescriptor());
 		}
@@ -130,7 +140,8 @@ public class JavaValue {
 		}
 	}
 
-	private static JavaValue generateArrayArg(int count, String typeStr, Type type, Random r) {
+	private static JavaValue generateArrayArg(String typeStr, Type type, Random r) {
+		final int count = r.nextInt(4);
 		final List<JavaValue> elements = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			elements.add(generateArg(type, r));

@@ -57,11 +57,16 @@ public class MethodWriter {
 	}
 
 	private static String addToString(String call, Type returnType) {
-		switch (returnType.getInternalName()) {
-		case "java/lang/String":
-			return call;
-		case "[Ljava/lang/String;":
+		final String typename = returnType.getInternalName();
+		if (typename.startsWith("[")) {
 			return "java.util.Arrays.toString(" + call + ")";
+		}
+		switch (typename) {
+		case "java/lang/String":
+		case "java/util/List":
+			return call;
+		case "java/util/Set":
+			return "new java.util.TreeSet<>(" + call + ")";
 		case "I":
 		case "S":
 		case "B":
@@ -73,7 +78,7 @@ public class MethodWriter {
 		case "Z":
 			return "Boolean.toString(" + call + ")";
 		default:
-			throw new AssertionError("unknown type " + returnType.getInternalName());
+			throw new AssertionError("unknown type " + typename);
 		}
 	}
 

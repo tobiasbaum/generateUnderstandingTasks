@@ -79,14 +79,24 @@ public class GenerateUnderstandingTasks {
 
 	private static boolean isSuitableType(Type type) {
 		switch (type.getDescriptor()) {
+		case "Ljava/util/Set;":
+		case "Ljava/util/List;":
+		case "Ljava/util/Collection;":
+		case "Ljava/util/Iterable;":
 		case "Ljava/lang/String;":
-		case "[Ljava/lang/String;":
 		case "Z":
 		case "C":
 		case "B":
 		case "S":
 		case "I":
 		case "J":
+		case "[Ljava/lang/String;":
+		case "[Z":
+		case "[C":
+		case "[B":
+		case "[S":
+		case "[I":
+		case "[J":
 			return true;
 		default:
 			return false;

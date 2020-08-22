@@ -11,6 +11,7 @@ import org.objectweb.asm.Type;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
@@ -112,8 +113,9 @@ public class MethodSlice {
 		cu.removePackageDeclaration();
 
 		for (final ImportDeclaration imp : new ArrayList<>(cu.getImports())) {
-			if (!(imp.getNameAsString().startsWith("java")
-					&& relevantNames.contains(imp.getName().getIdentifier()))) {
+			final String importString = imp.getNameAsString();
+			if (!(importString.startsWith("java")
+					&& (relevantNames.contains(imp.getName().getIdentifier()) || importString.indexOf('*') >= 0))) {
 				imp.remove();
 			}
 		}
@@ -125,6 +127,7 @@ public class MethodSlice {
 			if (type instanceof NodeWithExtends) {
 				((NodeWithExtends) type).setExtendedTypes(new NodeList<>());
 			}
+			type.setModifiers(Keyword.PUBLIC);
 
 			for (final MethodDeclaration method : new ArrayList<>(type.getMethods())) {
 				if (!relevantNames.contains(method.getNameAsString())) {
