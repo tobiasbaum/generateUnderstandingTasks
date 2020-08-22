@@ -74,14 +74,16 @@ public class UnderstandingTaskCodeTest {
 	public void testDetermineResult() {
 		final MethodSlice slice = MethodSlice.create(
 				"increment",
-				true, "class Foo {\n"
+				true,
+				"class Foo {\n"
 				+ "    /**\n"
 				+ "     * Does the incrementation.\n"
 				+ "     */\n"
 				+ "    public static int increment(int i) {\n"
 				+ "        return i + 1;\n"
 				+ "    }\n"
-				+ "}\n");
+				+ "}\n",
+				new StubSourceSource());
 
 		final UnderstandingTaskCode code = new UnderstandingTaskCode(
 				slice, Collections.singletonList(JavaValue.intValue("1")), new Random(12));
@@ -92,29 +94,31 @@ public class UnderstandingTaskCodeTest {
 	public void testGetCode() {
 		final MethodSlice slice = MethodSlice.create(
 				"increment",
-				true, "public class Foo {\n"
+				true,
+				"public class Foo {\n"
 				+ "    /**\n"
 				+ "     * Does the incrementation.\n"
 				+ "     */\n"
 				+ "    public static int increment(int i) {\n"
 				+ "        return i + 1;\n"
 				+ "    }\n"
-				+ "}\n");
+				+ "}\n",
+				new StubSourceSource());
 
 		final UnderstandingTaskCode code = new UnderstandingTaskCode(
 				slice, Collections.singletonList(JavaValue.intValue("1")), new Random(45));
 		assertEquals(
 				"public class Foo {\n"
 				+ "\n"
+				+ "    public static void main(String[] args) throws Exception {\n"
+				+ "        System.out.print(increment(1));\n"
+				+ "    }\n"
+				+ "\n"
 				+ "    /**\n"
 				+ "     * Does the incrementation.\n"
 				+ "     */\n"
 				+ "    public static int increment(int i) {\n"
 				+ "        return i + 1;\n"
-				+ "    }\n"
-				+ "\n"
-				+ "    public static void main(String[] args) throws Exception {\n"
-				+ "        System.out.print(increment(1));\n"
 				+ "    }\n"
 				+ "}\n",
 				code.getCode());

@@ -29,8 +29,14 @@ public class GenerateUnderstandingTasks {
 //		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.eclipsesource.minimal-json/minimal-json/0.9.4/d6e7dd22569de97c2697a4af301a623f35028972/minimal-json-0.9.4.jar");
 //		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.eclipsesource.minimal-json/minimal-json/0.9.4/a7f9afb2417b0126267435586bce893498bd8eff/minimal-json-0.9.4-sources.jar");
 
-		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/16313e02a793435009f1e458fa4af5d879f6fb11/commons-lang-2.4.jar");
-		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/2b8c4b3035e45520ef42033e823c7d33e4b4402c/commons-lang-2.4-sources.jar");
+//		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/16313e02a793435009f1e458fa4af5d879f6fb11/commons-lang-2.4.jar");
+//		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.4/2b8c4b3035e45520ef42033e823c7d33e4b4402c/commons-lang-2.4-sources.jar");
+
+//		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-simple/1.7.26/dfb0de47f433c2a37dd44449c88d84b698cd5cf7/slf4j-simple-1.7.26.jar");
+//		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-simple/1.7.26/e4804203f5f65c4762798b172418e0812d29b8c3/slf4j-simple-1.7.26-sources.jar");
+
+		jar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/29.0-jre/801142b4c3d0f0770dd29abea50906cacfddd447/guava-29.0-jre.jar");
+		sourceJar = new File("/home/ich/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/29.0-jre/33e6868bc0fcb9b4b493123eeec78d1352934e87/guava-29.0-jre-sources.jar");
 
 		final List<SuitableMethod> m = findSuitableMethodsInJar(jar);
 		final Random r = new Random(1234);

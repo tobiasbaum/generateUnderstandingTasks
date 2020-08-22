@@ -8,7 +8,7 @@ import java.util.zip.ZipEntry;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 
-public class SourceJar {
+public class SourceJar implements SourceSource {
 
 	private final JarFile jar;
 
@@ -16,6 +16,7 @@ public class SourceJar {
 		this.jar = sourceJar;
 	}
 
+	@Override
 	public CompilationUnit getSource(String pathToClass) {
 		if (pathToClass.endsWith(".class")) {
 			return this.getSource(pathToClass.replace(".class", ".java"));

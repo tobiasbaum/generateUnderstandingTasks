@@ -35,7 +35,7 @@ public class UnderstandingTaskCode {
 		try {
 			final ClassOrInterfaceDeclaration cl = cu.getClassByName(slice.getClassName()).get();
 
-			cl.addMember(this.createMainMethod(slice, args, r));
+			cl.getMembers().add(0, this.createMainMethod(slice, args, r));
 			this.code = cu.toString();
 		} catch (final NoSuchElementException e) {
 			//TEST
